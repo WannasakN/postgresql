@@ -2,6 +2,7 @@ import flask
 
 import models
 import forms
+from datetime import datetime
 
 
 app = flask.Flask(__name__)
@@ -83,9 +84,12 @@ def notes_edit(note_id):
     if not note:
         return "Note not found", 404
 
-    form = forms.NoteForm(obj=note)
+    form = forms.NoteForm()
     if form.validate_on_submit():
-        form.populate_obj(note)
+        note.title = flask.request.form["title"]
+        note.description = flask.request.form["description"]
+        note.updateed_date = datetime.now()
+
         db.session.commit()
         return flask.redirect(flask.url_for("index"))
 
@@ -101,6 +105,23 @@ def notes_delete(note_id):
     db.session.delete(note)
     db.session.commit()
     return flask.redirect(flask.url_for("index"))
+
+@app.route("/tags/edit/<int:tag_id>", methods=["GET", "POST"])
+def tags_edit(tag_id):
+    db = models.db
+    tag = db.session.query(models.Tag).get(tag_id)
+    if not tag:
+        return "Tag not found", 404
+
+    form = forms.NoteForm(obj=tag)
+    if flask.request.method == "POST":
+        tag_name = flask.request.form["name"]
+
+        tag.name = tag_name
+        db.session.commit()
+        return flask.redirect(flask.url_for("index"))
+
+    return flask.render_template("tags-edit.html", form=form, tag=tag)
 
 
 if __name__ == "__main__":
