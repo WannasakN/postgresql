@@ -76,5 +76,20 @@ def tags_view(tag_name):
         notes=notes,
     )
 
+@app.route("/notes/edit/<int:note_id>", methods=["GET", "POST"])
+def notes_edit(note_id):
+    db = models.db
+    note = db.session.query(models.Note).get(note_id)
+    if not note:
+        return "Note not found", 404
+
+    form = forms.NoteForm(obj=note)
+    if form.validate_on_submit():
+        form.populate_obj(note)
+        db.session.commit()
+        return flask.redirect(flask.url_for("index"))
+
+    return flask.render_template("notes-edit.html", form=form, note=note)
+
 if __name__ == "__main__":
     app.run(debug=True)
