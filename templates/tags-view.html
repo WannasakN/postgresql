@@ -19,7 +19,9 @@
     <div class="card-footer text-muted">
       Tags: 
       {% for t in note.tags %}
-        <a href="{{ url_for('tags_view', tag_name=t.name) }}">{{ t.name }}</a>,
+        <a href="{{ url_for('tags_view', tag_name=t.name) }}">{{ t.name }}</a>
+        <a class="btn btn-secondary" href="{{ url_for('tags_edit', tag_id=t.id) }}">Edit Tags</a>
+        <a class="btn btn-danger" href="{{ url_for('tags_delete', tag_id=tag.id) }}" >Delete</a>
       {% endfor %}
       <br>
       Last update: {{ note.updated_date }}

@@ -75,6 +75,7 @@ def tags_view(tag_name):
         "tags-view.html",
         tag_name=tag_name,
         notes=notes,
+        tag=tag,
     )
 
 @app.route("/notes/edit/<int:note_id>", methods=["GET", "POST"])
@@ -122,6 +123,28 @@ def tags_edit(tag_id):
         return flask.redirect(flask.url_for("index"))
 
     return flask.render_template("tags-edit.html", form=form, tag=tag)
+
+@app.route("/tags/delete/<int:tag_id>", methods=["GET", "POST"])
+def tags_delete(tag_id):
+    db = models.db
+    tag = db.session.query(models.Tag).get(tag_id)
+
+    if not tag:
+        return "Tag not found", 404
+
+    form = forms.TagForm(obj=tag)
+    if flask.request.method == "POST":
+        tag.name = flask.request.form["name"]
+        related_notes = db.session.query(models.Note).filter(models.Note.tags.any(id=tag_id)).all()
+        for note in related_notes:
+            note.tags.remove(tag)
+
+        db.session.delete(tag)  # ลบแท็ก
+        db.session.commit()  # ยืนยันการลบ
+        return flask.redirect(flask.url_for("index"))
+
+    return flask.render_template("tags-dalete.html", tag=tag, form=form)
+    
 
 
 if __name__ == "__main__":
