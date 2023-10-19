@@ -84,7 +84,7 @@ def notes_edit(note_id):
     if not note:
         return "Note not found", 404
 
-    form = forms.NoteForm()
+    form = forms.NoteForm(obj=note)
     if form.validate_on_submit():
         note.title = flask.request.form["title"]
         note.description = flask.request.form["description"]
@@ -113,11 +113,11 @@ def tags_edit(tag_id):
     if not tag:
         return "Tag not found", 404
 
-    form = forms.NoteForm(obj=tag)
+    form = forms.TagForm(obj=tag)
     if flask.request.method == "POST":
-        tag_name = flask.request.form["name"]
+        tagname = form.name.data  # เข้าถึงข้อมูลจากฟิลด์ในแบบฟอร์ม
 
-        tag.name = tag_name
+        tag.name = tagname
         db.session.commit()
         return flask.redirect(flask.url_for("index"))
 

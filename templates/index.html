@@ -16,12 +16,13 @@
       Tags: 
       {% for t in note.tags %}
         <a href="{{ url_for('tags_view', tag_name=t.name) }}">{{ t.name }}</a>
+        <a class="btn btn-secondary" href="{{ url_for('tags_edit', tag_id=t.id) }}">Edit Tags</a>
     {% endfor %}
       <br>
       Last update: {{ note.updated_date }}
     </div>
     <a class="btn btn-primary" href="{{ url_for('notes_edit', note_id=note.id) }}">Edit</a>
-    <a class="btn btn-primary"  href="{{ url_for('notes_delete', note_id=note.id) }}">Delete</a>
+    <a class="btn btn-danger" href="{{ url_for('notes_delete', note_id=note.id) }}" onclick="return confirm('คุณต้องการลบ Note นี้หรือไม่ ?')">Delete</a>
   </div>
 </div>
 {% endfor %}

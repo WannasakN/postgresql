@@ -1,6 +1,6 @@
 from wtforms_sqlalchemy.orm import model_form
 from flask_wtf import FlaskForm
-from wtforms import Field, widgets
+from wtforms import Field, StringField, widgets
 
 import models
 
@@ -41,3 +41,6 @@ BaseNoteForm = model_form(
 
 class NoteForm(BaseNoteForm):
     tags = TagListField("Tag")
+
+class TagForm(FlaskForm):
+    name = StringField("Name")
