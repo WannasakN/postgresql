@@ -91,5 +91,17 @@ def notes_edit(note_id):
 
     return flask.render_template("notes-edit.html", form=form, note=note)
 
+@app.route("/notes/delete/<int:note_id>")
+def notes_delete(note_id):
+    db = models.db
+    note = db.session.query(models.Note).get(note_id)
+    if not note:
+        return "Note not found", 404
+
+    db.session.delete(note)
+    db.session.commit()
+    return flask.redirect(flask.url_for("index"))
+
+
 if __name__ == "__main__":
     app.run(debug=True)
